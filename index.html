@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知見共有サイト</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                    知見共有サイト
+                </h1>
+                <button id="newKnowledgeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-plus mr-2"></i>新しい知見を追加
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 統計情報 -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">統計情報</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="totalKnowledge">0</div>
+                        <div class="text-sm text-gray-500">総知見数</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600" id="publishedPages">0</div>
+                        <div class="text-sm text-gray-500">公開ページ数</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-600" id="lastUpdated">-</div>
+                        <div class="text-sm text-gray-500">最終更新</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 検索・フィルター -->
+        <div class="mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" id="searchInput" placeholder="知見を検索..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="tagFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">全てのタグ</option>
+                        </select>
+                        <select id="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="date-desc">最新順</option>
+                            <option value="date-asc">古い順</option>
+                            <option value="title-asc">タイトル順</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 知見一覧 -->
+        <div class="space-y-4" id="knowledgeList">
+            <!-- 知見アイテムがここに動的に挿入されます -->
+        </div>
+
+        <!-- 知見が無い場合の表示 -->
+        <div id="emptyState" class="text-center py-12 hidden">
+            <i class="fas fa-lightbulb text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">まだ知見がありません</h3>
+            <p class="text-gray-500 mb-6">最初の知見を追加して始めましょう！</p>
+            <button onclick="document.getElementById('newKnowledgeBtn').click()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <i class="fas fa-plus mr-2"></i>知見を追加
+            </button>
+        </div>
+    </main>
+
+    <!-- 新規作成モーダル -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">新しい知見を作成</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="createForm">
+                        <div class="mb-4">
+                            <label for="knowledgeTitle" class="block text-sm font-medium text-gray-700 mb-2">タイトル</label>
+                            <input type="text" id="knowledgeTitle" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div class="mb-4">
+                            <label for="knowledgeDescription" class="block text-sm font-medium text-gray-700 mb-2">説明</label>
+                            <textarea id="knowledgeDescription" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label for="knowledgeTags" class="block text-sm font-medium text-gray-700 mb-2">タグ（カンマ区切り）</label>
+                            <input type="text" id="knowledgeTags" placeholder="例: JavaScript, React, Frontend"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" id="cancelCreate" 
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                キャンセル
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                作成してエディタを開く
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

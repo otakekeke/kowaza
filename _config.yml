@@ -1,0 +1,22 @@
+# GitHub Pages設定
+title: "知見共有サイト"
+description: "開発で得た知見を日々更新・公開できるウェブサイト"
+
+# GitHub Pages用設定
+plugins:
+  - jekyll-relative-links
+
+# 相対リンクを有効化
+relative_links:
+  enabled: true
+  collections: true
+
+# ファイル除外設定
+exclude:
+  - README.md
+  - .gitignore
+  - .github/
+
+# デフォルトレイアウト無効化（HTMLファイルをそのまま配信）
+markdown: kramdown
+highlighter: rouge
